@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String                   @id @default(cuid())
+  email        String                   @unique
+  name         String
+  role         UserRole                 @default(USER)
+  password     String
+  avatar       String?
+  isActive     Boolean                  @default(true)
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+  favorites    BusinessFavorite[]
+  inquiries    BusinessInquiry[]
+  messagesSent BusinessInquiryMessage[] @relation("UserInquiryMessages")
+  subscription UserSubscription?
+
+  @@map("users")
+}
+
+model UserSubscription {
+  id                   String           @id @default(cuid())
+  userId               String           @unique
+  plan                 SubscriptionPlan @default(FREE)
+  isActive             Boolean          @default(true)
+  expiresAt            DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  currentPeriodEnd     DateTime?        @map("current_period_end")
+  stripeCustomerId     String?          @map("stripe_customer_id")
+  stripePriceId        String?          @map("stripe_price_id")
+  sessionId            String?          @map("stripe_session_id")
+  stripeSubscriptionId String?          @unique @map("stripe_subscription_id")
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_subscriptions")
+}
+
+model Business {
+  id                String             @id @default(cuid())
+  title             String
+  location          String?
+  price             String?
+  description       String?
+  businessType      String?            @map("business_type")
+  status            String?
+  listingUrl        String?            @map("listing_url")
+  images            String[]
+  contactInfo       String?            @map("contact_info")
+  financialInfo     String?            @map("financial_info")
+  features          String?
+  additionalDetails String?            @map("additional_details")
+  allLinks          String[]           @map("all_links")
+  rawText           String?            @map("raw_text")
+  rawHtml           String?            @map("raw_html")
+  listingIndex      Int?               @map("listing_index")
+  extractionMethod  Int?               @map("extraction_method")
+  isApproved        Boolean            @default(false) @map("is_approved")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  isRejected        Boolean            @default(false) @map("is_rejected")
+  modifiedAt        DateTime?          @map("modified_at")
+  modifiedBy        String?            @map("modified_by")
+  is_junk           Boolean            @default(false)
+  favorites         BusinessFavorite[]
+  inquiries         BusinessInquiry[]
+
+  @@map("businesses")
+}
+
+model BusinessFavorite {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  businessId String   @map("business_id")
+  createdAt  DateTime @default(now())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, businessId])
+  @@map("business_favorites")
+}
+
+model BusinessInquiry {
+  id         String                   @id @default(cuid())
+  userId     String                   @map("user_id")
+  businessId String                   @map("business_id")
+  message    String?
+  status     InquiryStatus            @default(PENDING)
+  adminNotes String?                  @map("admin_notes")
+  createdAt  DateTime                 @default(now())
+  updatedAt  DateTime                 @updatedAt
+  subject    String?
+  business   Business                 @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages   BusinessInquiryMessage[]
+
+  @@map("business_inquiries")
+}
+
+model BusinessInquiryMessage {
+  id        String          @id @default(cuid())
+  inquiryId String          @map("inquiry_id")
+  senderId  String          @map("sender_id")
+  content   String
+  createdAt DateTime        @default(now())
+  inquiry   BusinessInquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  sender    User            @relation("UserInquiryMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([inquiryId, createdAt])
+  @@map("business_inquiry_messages")
+}
+
+model ScrapingSite {
+  id          String    @id @default(cuid())
+  name        String
+  url         String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  lastScraped DateTime? @map("last_scraped")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("scraping_sites")
+}
+
+model ScraperDetail {
+  id              String   @id @default(cuid())
+  startedAt       DateTime @map("started_at")
+  finishedAt      DateTime @map("finished_at")
+  durationMs      Int      @map("duration_ms")
+  totalUrls       Int      @map("total_urls")
+  scrapedCount    Int      @map("scraped_count")
+  uniqueCount     Int      @map("unique_count")
+  persistedCount  Int      @map("persisted_count")
+  duplicateCount  Int      @map("duplicate_count")
+  errorCount      Int      @map("error_count")
+  errorDetails    Json?    @map("error_details")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("scraper_details")
+}
+
+enum UserRole {
+  USER
+  PAID_USER
+  ADMIN
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
+  ENTERPRISE
+}
+
+enum InquiryStatus {
+  PENDING
+  ANSWERED
+  REJECTED
+}

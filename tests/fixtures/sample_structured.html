@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sample Structured Listings</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Sunrise Cafe",
+              "url": "https://example.com/listings/sunrise-cafe",
+              "description": "Popular cafe in the city center",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Lisbon",
+                "addressCountry": "Portugal"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": "€250000"
+              },
+              "image": [
+                "https://example.com/images/sunrise-1.jpg"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Harbor Bistro",
+              "url": "https://example.com/listings/harbor-bistro",
+              "description": "Seaside restaurant with strong turnover",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Porto",
+                "addressCountry": "Portugal"
+              }
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Businesses for Sale</h1>
+  </body>
+</html>

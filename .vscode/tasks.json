@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run pytest",
+			"type": "shell",
+			"command": "PATH=\"$HOME/Library/Python/3.9/bin:$PATH\" poetry run pytest",
+			"isBackground": false
+		}
+	]
+}
