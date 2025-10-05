@@ -4,13 +4,12 @@ import asyncio
 from datetime import datetime
 from typing import Iterable
 
-from cuid2 import cuid
-
 from app.core.logging_config import get_logger
 from app.db.session import DatabaseManager
 from app.schemas import Business, ScrapeError
 from app.scraper.coordinator import ScraperCoordinator
 from app.services.repository import BusinessRepository, PersistResult, ScrapeRunSummary
+from app.services.ids import new_id
 
 
 class ScrapeScheduler:
@@ -168,7 +167,7 @@ class ScrapeScheduler:
         composite = (biz.title or "").lower()
         if biz.location:
             composite += f"|{biz.location.lower()}"
-        return composite or cuid()
+    return composite or new_id()
 
     async def _persist(self, businesses: list[Business]) -> PersistResult:
         async with self._db_manager.session_scope() as session:

@@ -4,12 +4,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Iterable, Sequence
 
-from cuid2 import cuid
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import BusinessModel, ScraperDetailModel, ScrapingSiteModel
 from app.schemas import Business, ScrapeError
+from app.services.ids import new_id
 
 
 @dataclass(slots=True)
@@ -59,7 +59,7 @@ class BusinessRepository:
                 continue
 
             record = BusinessModel(
-                id=cuid(),
+                id=new_id(),
                 title=biz.title,
                 location=biz.location,
                 price=biz.price,
@@ -98,7 +98,7 @@ class BusinessRepository:
 
     async def record_scrape_detail(self, summary: ScrapeRunSummary) -> None:
         detail = ScraperDetailModel(
-            id=cuid(),
+            id=new_id(),
             started_at=summary.started_at,
             finished_at=summary.finished_at,
             duration_ms=summary.duration_ms,
