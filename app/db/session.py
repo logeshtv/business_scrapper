@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 
+from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import Settings
@@ -16,7 +17,7 @@ class DatabaseManager:
             raise ValueError("Database URL is required to initialise DatabaseManager")
         self._settings = settings
         self._engine: AsyncEngine = create_async_engine(
-            settings.database_url,
+            self._prepare_async_url(settings.database_url),
             echo=settings.sqlalchemy_echo,
             pool_pre_ping=True,
         )
@@ -25,6 +26,15 @@ class DatabaseManager:
             expire_on_commit=False,
             autoflush=False,
         )
+
+    def _prepare_async_url(self, value: str) -> str:
+        url: URL = make_url(value)
+        driver = (url.drivername or "").lower()
+        if driver.startswith("postgres"):
+            url = url.set(drivername="postgresql+asyncpg")
+        elif driver.startswith("mysql") or driver.startswith("mariadb"):
+            url = url.set(drivername="mysql+aiomysql")
+        return url.render_as_string(hide_password=False)
 
     @property
     def engine(self) -> AsyncEngine:
