@@ -34,8 +34,8 @@ class BusinessModel(Base):
     listing_index: Mapped[Optional[int]] = mapped_column("listing_index", Integer, nullable=True)
     extraction_method: Mapped[Optional[int]] = mapped_column("extraction_method", Integer, nullable=True)
     is_approved: Mapped[bool] = mapped_column("is_approved", Boolean, default=False, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column("createdAt", DateTime, default=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column("updatedAt", DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     is_rejected: Mapped[bool] = mapped_column("is_rejected", Boolean, default=False, nullable=False)
     modified_at: Mapped[Optional[datetime]] = mapped_column("modified_at", DateTime, nullable=True)
     modified_by: Mapped[Optional[str]] = mapped_column("modified_by", String, nullable=True)
@@ -49,10 +49,10 @@ class ScrapingSiteModel(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     url: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    is_active: Mapped[bool] = mapped_column("is_active", Boolean, default=True, nullable=False)
+    is_active: Mapped[bool] = mapped_column("isActive", Boolean, default=True, nullable=False)
     last_scraped: Mapped[Optional[datetime]] = mapped_column("last_scraped", DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column("createdAt", DateTime, default=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column("updatedAt", DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
 
 class ScraperDetailModel(Base):
