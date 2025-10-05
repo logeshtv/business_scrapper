@@ -167,7 +167,7 @@ class ScrapeScheduler:
         composite = (biz.title or "").lower()
         if biz.location:
             composite += f"|{biz.location.lower()}"
-    return composite or new_id()
+        return composite or new_id()
 
     async def _persist(self, businesses: list[Business]) -> PersistResult:
         async with self._db_manager.session_scope() as session:
