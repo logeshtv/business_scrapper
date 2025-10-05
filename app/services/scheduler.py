@@ -65,8 +65,8 @@ class ScrapeScheduler:
                 continue
 
     async def _execute_once(self) -> None:
-    started_at = datetime.utcnow()
-    self._logger.info("Cron scrape started", started_at=started_at.isoformat())
+        started_at = datetime.utcnow()
+        self._logger.info("Cron scrape started", started_at=started_at.isoformat())
         async with self._db_manager.session_scope() as session:
             repo = BusinessRepository(session)
             sites = await repo.get_active_sites()
@@ -119,9 +119,9 @@ class ScrapeScheduler:
                 )
 
         unique_businesses, duplicates_in_run = self._deduplicate_businesses(businesses)
-    persist_result = await self._persist(unique_businesses)
+        persist_result = await self._persist(unique_businesses)
 
-    finished_at = datetime.utcnow()
+        finished_at = datetime.utcnow()
         duration_ms = int((finished_at - started_at).total_seconds() * 1000)
         summary = ScrapeRunSummary(
             started_at=started_at,
