@@ -73,8 +73,6 @@ class BusinessRepository:
                 features=biz.features,
                 additional_details=biz.additionalDetails,
                 all_links=biz.allLinks or [],
-                raw_text=biz.rawText,
-                raw_html=getattr(biz, "rawHtml", None),
                 listing_index=biz.listingIndex,
                 extraction_method=biz.extractionMethod,
                 modified_at=biz.modifiedAt,
